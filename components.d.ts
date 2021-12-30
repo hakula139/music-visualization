@@ -3,7 +3,18 @@
 // Read more: https://github.com/vuejs/vue-next/pull/3399
 
 declare module 'vue' {
-  export interface GlobalComponents {}
+  export interface GlobalComponents {
+    AButton: typeof import('ant-design-vue/es')['Button'];
+    ALayout: typeof import('ant-design-vue/es')['Layout'];
+    ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent'];
+    ALayoutFooter: typeof import('ant-design-vue/es')['LayoutFooter'];
+    ALayoutHeader: typeof import('ant-design-vue/es')['LayoutHeader'];
+    BellOutlined: typeof import('@ant-design/icons-vue')['BellOutlined'];
+    HeartFilled: typeof import('@ant-design/icons-vue')['HeartFilled'];
+    PageFooter: typeof import('./src/components/PageFooter.vue')['default'];
+    PageHeader: typeof import('./src/components/PageHeader.vue')['default'];
+    UserOutlined: typeof import('@ant-design/icons-vue')['UserOutlined'];
+  }
 }
 
 export {};
