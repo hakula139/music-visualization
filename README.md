@@ -1,12 +1,10 @@
-# Vue 3 + TypeScript + Vite
+# Music Visualization
 
-A template for Vue 3 + TypeScript apps, built with Vite.
-
-Here's a [Demo](https://vue-ts-app-template.vercel.app), deployed on [Vercel](https://vercel.com).
+A simple tool for music visualization.
 
 ## Table of Contents
 
-- [Vue 3 + TypeScript + Vite](#vue-3--typescript--vite)
+- [Music Visualization](#music-visualization)
   - [Table of Contents](#table-of-contents)
   - [Getting Started](#getting-started)
     - [Installation](#installation)
