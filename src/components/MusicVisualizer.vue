@@ -2,6 +2,7 @@
   <canvas
     ref="canvasRef"
     class="w-full"
+    :style="{ height: 'calc(100% - 88px)' }"
   />
 
   <div class="flex flex-row items-center p-4">
@@ -63,7 +64,7 @@ import { reactive, ref } from 'vue';
 import { Form, SelectProps } from 'ant-design-vue';
 import { RuleObject, ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
-import { CANVAS, FFT_SIZE } from '@/configs';
+import { ANALYZER, CANVAS } from '@/configs';
 
 import LOCAL_AUDIO_SRC_URL_399367387 from '../../tests/399367387.mp3'; // はな - 櫻ノ詩
 
@@ -73,8 +74,11 @@ const { useForm } = Form;
 
 // #region audio analyser
 
+const { FFT_SIZE, SMOOTHING_TIME_CONST } = ANALYZER;
+
 const audioPlayerRef = ref<HTMLAudioElement>();
 const audioSrcUrl = ref<string>();
+const audioSrc = ref<MediaElementAudioSourceNode>();
 const audioContext = ref<AudioContext>();
 const audioAnalyser = ref<AnalyserNode>();
 
@@ -82,9 +86,15 @@ const setupAudioAnalyser = (): void => {
   if (audioPlayerRef.value && !audioContext.value) {
     audioContext.value = new AudioContext({ latencyHint: 'interactive' });
 
+    audioPlayerRef.value.onplay = () => audioContext.value?.resume();
+    audioSrc.value = audioContext.value.createMediaElementSource(audioPlayerRef.value);
+
     audioAnalyser.value = audioContext.value.createAnalyser();
-    audioAnalyser.value.connect(audioContext.value.destination);
+    audioAnalyser.value.smoothingTimeConstant = SMOOTHING_TIME_CONST;
     audioAnalyser.value.fftSize = FFT_SIZE;
+
+    audioSrc.value.connect(audioAnalyser.value);
+    audioAnalyser.value.connect(audioContext.value.destination);
   }
 };
 
@@ -96,6 +106,13 @@ const { BAR_GAP, BAR_WIDTH } = CANVAS;
 
 const canvasRef = ref<HTMLCanvasElement>();
 const canvasContext = ref<CanvasRenderingContext2D>();
+
+const setupCanvas = (): void => {
+  if (canvasRef.value && !canvasContext.value) {
+    canvasContext.value = canvasRef.value.getContext('2d')!;
+    canvasContext.value.fillStyle = '#fb8c00';
+  }
+};
 
 const render = (): void => {
   if (canvasRef.value && canvasContext.value && audioAnalyser.value) {
@@ -113,13 +130,6 @@ const render = (): void => {
     }
 
     requestAnimationFrame(render);
-  }
-};
-
-const setupCanvas = (): void => {
-  if (canvasRef.value && !canvasContext.value) {
-    canvasContext.value = canvasRef.value.getContext('2d')!;
-    canvasContext.value.fillStyle = '#fb8c00';
   }
 };
 
@@ -182,13 +192,13 @@ const closeMusicSelectModal = (): void => {
 const submitMusicSelectForm = (): void => {
   validate()
     .then((): void => {
-      closeMusicSelectModal();
       const { localAudioSrcUrl, remoteAudioSrcUrl } = musicSelectModal.data;
       audioSrcUrl.value = localAudioSrcUrl || remoteAudioSrcUrl || '';
 
       setupAudioAnalyser();
       setupCanvas();
       render();
+      closeMusicSelectModal();
     })
     .catch((err: ValidateErrorEntity): void => {
       console.log('validate error:', err);
@@ -197,9 +207,3 @@ const submitMusicSelectForm = (): void => {
 
 // #endregion
 </script>
-
-<style scoped>
-canvas {
-  height: calc(100% - 88px);
-}
-</style>
