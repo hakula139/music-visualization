@@ -1,7 +1,7 @@
 <template>
   <canvas
     ref="canvasRef"
-    class="w-full p-4"
+    class="w-full p-4 pb-0"
     :style="{ height: 'calc(100% - 88px)' }"
   />
 
@@ -39,7 +39,7 @@
       <a-form-item v-bind="validateInfos.localAudioSrcUrl">
         <a-select
           v-model:value="musicSelectModal.data.localAudioSrcUrl"
-          placeholder="请选择音乐地址"
+          placeholder="请选择需要可视化的音乐"
           :options="musicSelectOptions"
         />
       </a-form-item>
@@ -110,7 +110,16 @@ const canvasContext = ref<CanvasRenderingContext2D>();
 const setupCanvas = (): void => {
   if (canvasRef.value && !canvasContext.value) {
     canvasContext.value = canvasRef.value.getContext('2d')!;
-    canvasContext.value.fillStyle = '#fb8c00';
+  }
+};
+
+const setFillStyle = (): void => {
+  if (canvasRef.value && canvasContext.value) {
+    const gradient = canvasContext.value.createLinearGradient(0, 0, 0, canvasRef.value.height);
+    gradient.addColorStop(0, '#ffc947');
+    gradient.addColorStop(0.5, '#ff9800');
+    gradient.addColorStop(1, '#c66900');
+    canvasContext.value.fillStyle = gradient;
   }
 };
 
@@ -119,16 +128,16 @@ const render = (): void => {
     const { clientWidth: width, clientHeight: height } = canvasRef.value;
     canvasRef.value.width = width;
     canvasRef.value.height = height;
-    canvasContext.value.clearRect(0, 0, width, height);
+    setFillStyle();
 
     const spectrum = new Uint8Array(audioAnalyser.value.frequencyBinCount);
     audioAnalyser.value.getByteFrequencyData(spectrum);
 
-    const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
+    const barCount = Math.floor(width / (BAR_WIDTH + BAR_GAP));
     const step = Math.round(spectrum.length / barCount);
     for (let i = 0; i < barCount; i += 1) {
-      const barDb = average(Array.from(spectrum), i * step, (i + 1) * step);
-      const barHeight = Math.max((barDb / FFT_SIZE) * height, MIN_HEIGHT);
+      const barValue = average(Array.from(spectrum), i * step, (i + 1) * step);
+      const barHeight = Math.max((barValue / FFT_SIZE) * height, MIN_HEIGHT);
       canvasContext.value.fillRect(i * (BAR_WIDTH + BAR_GAP), height - barHeight, BAR_WIDTH, barHeight);
     }
 
@@ -155,7 +164,7 @@ const musicSelectOptions = ref<SelectProps['options']>([
   },
   {
     value: '/',
-    label: '其他地址',
+    label: '其他',
   },
 ]);
 
