@@ -66,7 +66,8 @@ import { RuleObject, ValidateErrorEntity } from 'ant-design-vue/es/form/interfac
 import { ANALYZER, CANVAS } from '@/configs';
 import { average } from '@/composables';
 
-import LOCAL_AUDIO_SRC_URL_399367387 from '../../tests/399367387.mp3'; // はな - 櫻ノ詩
+import LOCAL_AUDIO_SRC_URL_399367387 from '../../tests/399367387.mp3';
+import LOCAL_AUDIO_SRC_URL_399367388 from '../../tests/399367388.mp3';
 
 const { useForm } = Form;
 
@@ -161,6 +162,10 @@ const musicSelectOptions = ref<SelectProps['options']>([
   {
     value: LOCAL_AUDIO_SRC_URL_399367387,
     label: 'はな - 櫻ノ詩',
+  },
+  {
+    value: LOCAL_AUDIO_SRC_URL_399367388,
+    label: 'monet - Pica pica',
   },
   {
     value: '',
