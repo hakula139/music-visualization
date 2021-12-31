@@ -2,6 +2,7 @@ export const { BASE_URL, PROD } = import.meta.env;
 export const META_INFO = {
   TITLE: 'Music Visualization',
   AUTHOR: 'Hakula',
+  REPO_URL: 'https://github.com/hakula139/music-visualization',
 };
 export const FFT_SIZE = 512;
 export const CANVAS = {

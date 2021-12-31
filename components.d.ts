@@ -4,10 +4,12 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AButton: typeof import('ant-design-vue/es')['Button'];
     ALayout: typeof import('ant-design-vue/es')['Layout'];
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent'];
     ALayoutFooter: typeof import('ant-design-vue/es')['LayoutFooter'];
     ALayoutHeader: typeof import('ant-design-vue/es')['LayoutHeader'];
+    GithubOutlined: typeof import('@ant-design/icons-vue')['GithubOutlined'];
     HeartFilled: typeof import('@ant-design/icons-vue')['HeartFilled'];
     MusicVisualizer: typeof import('./src/components/MusicVisualizer.vue')['default'];
     PageFooter: typeof import('./src/components/PageFooter.vue')['default'];
