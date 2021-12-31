@@ -7,7 +7,7 @@ export const META_INFO = {
 };
 
 export const ANALYZER = {
-  FFT_SIZE: 512,
+  FFT_SIZE: 2 ** 8,
   SMOOTHING_TIME_CONST: 0.8,
 };
 

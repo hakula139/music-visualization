@@ -134,9 +134,9 @@ const render = (): void => {
     audioAnalyser.value.getByteFrequencyData(spectrum);
 
     const barCount = Math.floor(width / (BAR_WIDTH + BAR_GAP));
-    const step = Math.round(spectrum.length / barCount);
+    const step = spectrum.length / barCount;
     for (let i = 0; i < barCount; i += 1) {
-      const barValue = average(Array.from(spectrum), i * step, (i + 1) * step);
+      const barValue = average(Array.from(spectrum), Math.floor(i * step), Math.ceil((i + 1) * step));
       const barHeight = Math.max((barValue / FFT_SIZE) * height, MIN_HEIGHT);
       canvasContext.value.fillRect(i * (BAR_WIDTH + BAR_GAP), height - barHeight, BAR_WIDTH, barHeight);
     }
