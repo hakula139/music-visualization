@@ -44,7 +44,7 @@
         />
       </a-form-item>
       <a-form-item
-        v-show="musicSelectModal.data.localAudioSrcUrl === '/'"
+        v-show="musicSelectModal.data.localAudioSrcUrl === ''"
         v-bind="validateInfos.remoteAudioSrcUrl"
       >
         <a-input
@@ -163,13 +163,20 @@ const musicSelectOptions = ref<SelectProps['options']>([
     label: 'はな - 櫻ノ詩',
   },
   {
-    value: '/',
+    value: '',
     label: '其他',
   },
 ]);
 
+const validateLocalAudioSrcUrl = async (_rule: RuleObject, value: string): Promise<void> => {
+  if (value === undefined) {
+    return Promise.reject(new Error('选择项不能为空'));
+  }
+  return Promise.resolve();
+};
+
 const validateRemoteAudioSrcUrl = async (_rule: RuleObject, value: string): Promise<void> => {
-  if (musicSelectModal.data.localAudioSrcUrl === '/' && (!value || !value.trim())) {
+  if (musicSelectModal.data.localAudioSrcUrl === '' && (!value || !value.trim())) {
     return Promise.reject(new Error('外链地址不能为空'));
   }
   return Promise.resolve();
@@ -178,8 +185,7 @@ const validateRemoteAudioSrcUrl = async (_rule: RuleObject, value: string): Prom
 const musicSelectFormRules = reactive({
   localAudioSrcUrl: [
     {
-      required: true,
-      message: '选择项不能为空',
+      validator: validateLocalAudioSrcUrl,
       trigger: ['blur', 'change'],
     },
   ],
