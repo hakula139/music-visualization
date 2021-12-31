@@ -1,7 +1,7 @@
 <template>
   <canvas
     ref="canvasRef"
-    class="w-full"
+    class="w-full p-4"
     :style="{ height: 'calc(100% - 88px)' }"
   />
 
@@ -20,7 +20,6 @@
       class="w-full"
       :src="audioSrcUrl"
       controls
-      loop
     />
   </div>
 
@@ -65,6 +64,7 @@ import { Form, SelectProps } from 'ant-design-vue';
 import { RuleObject, ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
 import { ANALYZER, CANVAS } from '@/configs';
+import { average } from '@/composables';
 
 import LOCAL_AUDIO_SRC_URL_399367387 from '../../tests/399367387.mp3'; // はな - 櫻ノ詩
 
@@ -102,7 +102,7 @@ const setupAudioAnalyser = (): void => {
 
 // #region canvas
 
-const { BAR_GAP, BAR_WIDTH } = CANVAS;
+const { BAR_GAP, BAR_WIDTH, MIN_HEIGHT } = CANVAS;
 
 const canvasRef = ref<HTMLCanvasElement>();
 const canvasContext = ref<CanvasRenderingContext2D>();
@@ -116,17 +116,20 @@ const setupCanvas = (): void => {
 
 const render = (): void => {
   if (canvasRef.value && canvasContext.value && audioAnalyser.value) {
-    const { width, height } = canvasRef.value;
+    const { clientWidth: width, clientHeight: height } = canvasRef.value;
+    canvasRef.value.width = width;
+    canvasRef.value.height = height;
     canvasContext.value.clearRect(0, 0, width, height);
 
     const spectrum = new Uint8Array(audioAnalyser.value.frequencyBinCount);
     audioAnalyser.value.getByteFrequencyData(spectrum);
 
     const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
-    const step = Math.round(spectrum.length / BAR_WIDTH);
+    const step = Math.round(spectrum.length / barCount);
     for (let i = 0; i < barCount; i += 1) {
-      const value = spectrum[i * step];
-      canvasContext.value.fillRect(i * (BAR_WIDTH + BAR_GAP), height - value, BAR_WIDTH, value);
+      const barDb = average(Array.from(spectrum), i * step, (i + 1) * step);
+      const barHeight = Math.max((barDb / FFT_SIZE) * height, MIN_HEIGHT);
+      canvasContext.value.fillRect(i * (BAR_WIDTH + BAR_GAP), height - barHeight, BAR_WIDTH, barHeight);
     }
 
     requestAnimationFrame(render);

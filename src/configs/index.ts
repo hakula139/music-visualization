@@ -13,5 +13,6 @@ export const ANALYZER = {
 
 export const CANVAS = {
   BAR_GAP: 5,
-  BAR_WIDTH: 10,
+  BAR_WIDTH: 16,
+  MIN_HEIGHT: 2,
 };
