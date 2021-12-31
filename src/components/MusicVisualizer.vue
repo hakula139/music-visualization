@@ -1,6 +1,7 @@
 <template>
-  <div class="flex flex-row p-4 space-x-4 align-middle">
+  <div class="flex flex-row items-center p-4">
     <a-button
+      class="m-2"
       type="primary"
       size="large"
       @click="openMusicSelectModal"
@@ -196,6 +197,6 @@ nextTick(() => {
 
 <style scoped>
 canvas {
-  height: calc(100% - 86px);
+  height: calc(100% - 88px);
 }
 </style>
