@@ -10,12 +10,10 @@ declare module 'vue' {
     AInput: typeof import('ant-design-vue/es')['Input'];
     ALayout: typeof import('ant-design-vue/es')['Layout'];
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent'];
-    ALayoutFooter: typeof import('ant-design-vue/es')['LayoutFooter'];
     ALayoutHeader: typeof import('ant-design-vue/es')['LayoutHeader'];
     AModal: typeof import('ant-design-vue/es')['Modal'];
     ASelect: typeof import('ant-design-vue/es')['Select'];
     GithubOutlined: typeof import('@ant-design/icons-vue')['GithubOutlined'];
-    HeartFilled: typeof import('@ant-design/icons-vue')['HeartFilled'];
     MusicVisualizer: typeof import('./src/components/MusicVisualizer.vue')['default'];
     PageFooter: typeof import('./src/components/PageFooter.vue')['default'];
     PageHeader: typeof import('./src/components/PageHeader.vue')['default'];
