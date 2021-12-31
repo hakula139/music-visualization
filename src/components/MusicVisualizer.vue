@@ -1,4 +1,9 @@
 <template>
+  <canvas
+    ref="canvasRef"
+    class="w-full"
+  />
+
   <div class="flex flex-row items-center p-4">
     <a-button
       class="m-2"
@@ -9,7 +14,7 @@
       选择音乐
     </a-button>
     <audio
-      v-if="audioSrcUrl"
+      v-show="audioSrcUrl"
       ref="audioPlayerRef"
       class="w-full"
       :src="audioSrcUrl"
@@ -49,17 +54,12 @@
       </a-form-item>
     </a-form>
   </a-modal>
-
-  <canvas
-    ref="canvasRef"
-    class="w-full"
-  />
 </template>
 
 <script setup lang="ts">
 // #region imports
 
-import { nextTick, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { Form, SelectProps } from 'ant-design-vue';
 import { RuleObject, ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
 
@@ -85,6 +85,41 @@ const setupAudioAnalyser = (): void => {
     audioAnalyser.value = audioContext.value.createAnalyser();
     audioAnalyser.value.connect(audioContext.value.destination);
     audioAnalyser.value.fftSize = FFT_SIZE;
+  }
+};
+
+// #endregion
+
+// #region canvas
+
+const { BAR_GAP, BAR_WIDTH } = CANVAS;
+
+const canvasRef = ref<HTMLCanvasElement>();
+const canvasContext = ref<CanvasRenderingContext2D>();
+
+const render = (): void => {
+  if (canvasRef.value && canvasContext.value && audioAnalyser.value) {
+    const { width, height } = canvasRef.value;
+    canvasContext.value.clearRect(0, 0, width, height);
+
+    const spectrum = new Uint8Array(audioAnalyser.value.frequencyBinCount);
+    audioAnalyser.value.getByteFrequencyData(spectrum);
+
+    const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
+    const step = Math.round(spectrum.length / BAR_WIDTH);
+    for (let i = 0; i < barCount; i += 1) {
+      const value = spectrum[i * step];
+      canvasContext.value.fillRect(i * (BAR_WIDTH + BAR_GAP), height - value, BAR_WIDTH, value);
+    }
+
+    requestAnimationFrame(render);
+  }
+};
+
+const setupCanvas = (): void => {
+  if (canvasRef.value && !canvasContext.value) {
+    canvasContext.value = canvasRef.value.getContext('2d')!;
+    canvasContext.value.fillStyle = '#fb8c00';
   }
 };
 
@@ -134,7 +169,7 @@ const musicSelectFormRules = reactive({
   ],
 });
 
-const { resetFields, validate, validateInfos } = useForm(musicSelectModal.data, musicSelectFormRules);
+const { validate, validateInfos } = useForm(musicSelectModal.data, musicSelectFormRules);
 
 const openMusicSelectModal = (): void => {
   musicSelectModal.visible = true;
@@ -142,55 +177,23 @@ const openMusicSelectModal = (): void => {
 
 const closeMusicSelectModal = (): void => {
   musicSelectModal.visible = false;
-  resetFields();
 };
 
 const submitMusicSelectForm = (): void => {
   validate()
     .then((): void => {
-      musicSelectModal.visible = false;
+      closeMusicSelectModal();
       const { localAudioSrcUrl, remoteAudioSrcUrl } = musicSelectModal.data;
       audioSrcUrl.value = localAudioSrcUrl || remoteAudioSrcUrl || '';
+
       setupAudioAnalyser();
+      setupCanvas();
+      render();
     })
     .catch((err: ValidateErrorEntity): void => {
       console.log('validate error:', err);
     });
 };
-
-// #endregion
-
-// #region canvas
-
-const { BAR_GAP, BAR_WIDTH } = CANVAS;
-
-const canvasRef = ref<HTMLCanvasElement>();
-const canvasContext = ref<CanvasRenderingContext2D>();
-
-const render = (): void => {
-  if (canvasRef.value && canvasContext.value && audioAnalyser.value) {
-    const { width, height } = canvasRef.value;
-    canvasContext.value.clearRect(0, 0, width, height);
-
-    const spectrum = new Uint8Array(audioAnalyser.value.frequencyBinCount);
-    audioAnalyser.value.getByteFrequencyData(spectrum);
-
-    const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
-    const step = Math.round(spectrum.length / BAR_WIDTH);
-    for (let i = 0; i < barCount; i += 1) {
-      const value = spectrum[i * step];
-      canvasContext.value.fillRect(i * (BAR_WIDTH + BAR_GAP), height - value, BAR_WIDTH, value);
-    }
-
-    requestAnimationFrame(render);
-  }
-};
-
-nextTick(() => {
-  canvasContext.value = canvasRef.value!.getContext('2d')!;
-  canvasContext.value.fillStyle = '#fb8c00';
-  render();
-});
 
 // #endregion
 </script>

@@ -4,6 +4,5 @@
     <a-layout-content>
       <music-visualizer />
     </a-layout-content>
-    <page-footer />
   </a-layout>
 </template>
