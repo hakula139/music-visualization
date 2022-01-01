@@ -136,9 +136,10 @@ const render = (): void => {
 
     const barCount = Math.floor(width / (BAR_WIDTH + BAR_GAP));
     const step = spectrum.length / barCount;
+    const scale = height / FFT_SIZE;
     for (let i = 0; i < barCount; i += 1) {
       const barValue = average(Array.from(spectrum), Math.floor(i * step), Math.ceil((i + 1) * step));
-      const barHeight = Math.max((barValue / FFT_SIZE) * height, MIN_HEIGHT);
+      const barHeight = Math.max(barValue * scale, MIN_HEIGHT);
       canvasContext.value.fillRect(i * (BAR_WIDTH + BAR_GAP), height - barHeight, BAR_WIDTH, barHeight);
     }
 

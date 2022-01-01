@@ -1,6 +1,10 @@
 # Music Visualization
 
-A simple tool for music visualization.
+A simple tool for music visualization, utilizing HTML5 Canvas, written in TypeScript.
+
+[中文报告](./docs/report.md) | [线上 Demo](https://music-visualization-hakula.vercel.app)
+
+![屏幕截图](./docs/assets/screenshot.png)
 
 ## Table of Contents
 
