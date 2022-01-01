@@ -25,7 +25,7 @@ Execute `yarn dev` to start a development server. Modifying your code will autom
 
 ### Usage
 
-Execute `./scripts/start.sh` to start the server. The website will be hosted on `localhost:7000` by default.
+Execute `./scripts/start.sh` to start the server. The website will be hosted on `localhost:7070` by default.
 
 Execute `./scripts/stop.sh` to stop the server.
 
